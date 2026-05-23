@@ -287,7 +287,8 @@ function MobinScrollReveal({ grabbed }) {
 
   return (
     <div className="scroll-wrapper" ref={wrapperRef}>
-      <section className={"sticky-section" + (panelUp ? " in" : "")}>
+      <section className={"sticky-section" + (panelUp ? " in" : "")}
+               style={mobile ? { transform: "none", transition: "none", position: "relative" } : {}}>
         <div className="logo-background">
           {apps.map((app, i) => {
             const fd = floatData[i];
@@ -310,13 +311,16 @@ function MobinScrollReveal({ grabbed }) {
         </div>
 
         <div className="stats-center">
-          <p id="stat-apps" className={"stat-row" + (mobile ? " visible" : "")}>
+          <p id="stat-apps" className={"stat-row" + (mobile ? " visible" : "")}
+             style={mobile ? { opacity: 1, transform: "none", transition: "none" } : {}}>
             Everything they took.
           </p>
-          <h2 id="stat-screens" className={"stat-row" + (mobile ? " visible" : "")}>
+          <h2 id="stat-screens" className={"stat-row" + (mobile ? " visible" : "")}
+              style={mobile ? { opacity: 1, transform: "none", transition: "none" } : {}}>
             On something they can't take.
           </h2>
-          <p id="stat-flows" className={"stat-row" + (mobile ? " visible" : "")}>
+          <p id="stat-flows" className={"stat-row" + (mobile ? " visible" : "")}
+             style={mobile ? { opacity: 1, transform: "none", transition: "none" } : {}}>
             A note-taking device. <em>Technically.</em>
           </p>
         </div>
