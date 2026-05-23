@@ -431,7 +431,7 @@ function AppTile({ size = 80, kind }) {
     sleeper:   { bg: "#000000", src: "logos/sleeper.svg",         full: true, cover: true },
     yahoo:     { bg: "#6001D2", src: "logos/yahoo.svg",           full: true },
     espn:      { bg: "#CC0000", src: "logos/espn.svg",            scale: 0.88, white: true },
-    chatgpt:   { bg: "#000000", src: "logos/chatgpt.svg",         full: true },
+    chatgpt:   { bg: "white",   src: "logos/chatgpt.svg",         full: true },
   };
 
   const c = CFG[kind] || { bg: "#888888", src: "" };

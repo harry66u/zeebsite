@@ -120,41 +120,23 @@ function ZeebDevice({ width = 460, height = 225 }) {
 
 /* Stylus — slim, matte, premium note-taking pen. Length scales with device. */
 function Stylus({ deviceWidth, deviceHeight }) {
-  const mobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-  const len = mobile
-    ? Math.round(deviceWidth * 0.7)
-    : Math.round(deviceHeight * 0.92);
+  const len = Math.round(deviceWidth * 0.7);
   const tipW = 5;
   const barrelW = 9;
   const angle = 14;
 
-  // Desktop: diagonal on left side, tip lower-left, eraser upper-right.
-  // Mobile: horizontal across top of device, tilted slightly.
-  const wrapperStyle = mobile
-    ? {
-        position: "absolute",
-        top: -Math.round(len / 2) - 4,
-        left: Math.round(deviceWidth / 2 - barrelW / 2),
-        width: barrelW,
-        height: len,
-        transform: `rotate(${-(90 - angle)}deg)`,
-        transformOrigin: "center center",
-        zIndex: 2,
-        pointerEvents: "none",
-        filter: "drop-shadow(0 14px 18px rgba(20,40,90,0.30)) drop-shadow(0 2px 3px rgba(20,40,90,0.20))",
-      }
-    : {
-        position: "absolute",
-        left: Math.round(deviceWidth * 0.18) - Math.round(barrelW * 0.5),
-        top: -Math.round(len * 0.82),
-        width: barrelW,
-        height: len,
-        transform: `rotate(${angle}deg)`,
-        transformOrigin: "bottom center",
-        zIndex: 2,
-        pointerEvents: "none",
-        filter: "drop-shadow(0 14px 18px rgba(20,40,90,0.30)) drop-shadow(0 2px 3px rgba(20,40,90,0.20))",
-      };
+  const wrapperStyle = {
+    position: "absolute",
+    top: -Math.round(len / 2) - 4,
+    left: Math.round(deviceWidth / 2 - barrelW / 2),
+    width: barrelW,
+    height: len,
+    transform: `rotate(${-(90 - angle)}deg)`,
+    transformOrigin: "center center",
+    zIndex: 2,
+    pointerEvents: "none",
+    filter: "drop-shadow(0 14px 18px rgba(20,40,90,0.30)) drop-shadow(0 2px 3px rgba(20,40,90,0.20))",
+  };
 
   return (
     <div style={wrapperStyle}>
@@ -246,7 +228,7 @@ function NotesScreen({ width, height, mobile = false }) {
         borderRight: "1px solid rgba(20,30,50,0.08)",
       }}>
         <div style={{
-          position: "absolute", top: 8, left: 10, right: 10,
+          position: "absolute", top: mobile ? 8 : 18, left: 10, right: 10,
           display: "flex", alignItems: "center", gap: 6,
         }}>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
@@ -255,11 +237,11 @@ function NotesScreen({ width, height, mobile = false }) {
           <span style={{ fontSize: 9, color: "#7a7e88", fontWeight: 500 }}>Notes</span>
         </div>
 
-        <div style={{ position: "absolute", top: 24, left: 12, right: 12 }}>
+        <div style={{ position: "absolute", top: mobile ? 24 : 52, left: 12, right: 12 }}>
           <div style={{
             fontFamily: "'Inter Tight', system-ui, sans-serif",
             fontWeight: 800,
-            fontSize: mobile ? 14 : 16,
+            fontSize: mobile ? 14 : 30,
             letterSpacing: "-0.025em",
             color: "#14161a",
             lineHeight: 1.1,
@@ -278,14 +260,14 @@ function NotesScreen({ width, height, mobile = false }) {
 
         <div style={{
           position: "absolute",
-          top: 52, left: 12, right: 8, bottom: 14,
+          top: mobile ? 52 : 120, left: 12, right: 8, bottom: mobile ? 14 : 30,
           overflow: "hidden",
         }}>
           <div style={{
             position: "absolute", inset: 0,
             backgroundImage: "linear-gradient(to bottom, rgba(30,40,60,0.07) 1px, transparent 1px)",
-            backgroundSize: mobile ? "100% 24px" : "100% 26px",
-            backgroundPosition: mobile ? "0 22px" : "0 24px",
+            backgroundSize: mobile ? "100% 24px" : "100% 52px",
+            backgroundPosition: mobile ? "0 22px" : "0 50px",
           }} />
           <div style={{
             position: "absolute", top: 0, bottom: 0, left: 14,
@@ -295,8 +277,8 @@ function NotesScreen({ width, height, mobile = false }) {
             position: "absolute", left: 22, right: 4, top: 2,
             fontFamily: "'Caveat', cursive",
             fontWeight: 600,
-            fontSize: mobile ? 19 : 21,
-            lineHeight: mobile ? "24px" : "26px",
+            fontSize: mobile ? 19 : 40,
+            lineHeight: mobile ? "24px" : "52px",
             color: "#1d3a6f",
             letterSpacing: "0.005em",
           }}>
