@@ -625,19 +625,13 @@ function App() {
     if (!cleanEmail || status === "loading") return;
     setStatus("loading");
     try {
-      // Apps Script Web Apps don't return CORS headers, so we use no-cors.
-      // The request still reaches the script — we just can't read the
-      // response. URL-encoded form data avoids the CORS preflight.
+      // Apps Script redirects POST to a different domain, dropping the body.
+      // GET with params in the URL survives the redirect reliably.
       if (ZEEB_WAITLIST_ENDPOINT && !ZEEB_WAITLIST_ENDPOINT.startsWith("PASTE")) {
-        await fetch(ZEEB_WAITLIST_ENDPOINT, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({
-            email: cleanEmail,
-            timestamp: new Date().toISOString(),
-          }),
-        });
+        const url = new URL(ZEEB_WAITLIST_ENDPOINT);
+        url.searchParams.set("email", cleanEmail);
+        url.searchParams.set("timestamp", new Date().toISOString());
+        await fetch(url.toString(), { mode: "no-cors" });
       } else {
         // Endpoint not configured yet — fall back to a brief delay so the
         // UI still flows correctly during local testing.
