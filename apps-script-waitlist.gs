@@ -39,9 +39,26 @@ function doPost(e) {
   }
 }
 
-// Optional: lets you sanity-check the URL in a browser tab.
-function doGet() {
-  return _json({ ok: true, ping: "zeeb-waitlist" });
+// Handles submissions sent as GET (params in URL — survives the Apps Script
+// redirect that drops POST bodies).
+function doGet(e) {
+  var email = (e && e.parameter && e.parameter.email) || "";
+  if (!email) return _json({ ok: true, ping: "zeeb-waitlist" });
+
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Waitlist") || ss.getActiveSheet();
+    var ts = (e && e.parameter && e.parameter.timestamp) || new Date().toISOString();
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return _json({ ok: false, error: "invalid_email" });
+    }
+
+    sheet.appendRow([ts, email]);
+    return _json({ ok: true });
+  } catch (err) {
+    return _json({ ok: false, error: String(err) });
+  }
 }
 
 function _json(obj) {
