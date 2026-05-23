@@ -249,7 +249,7 @@ function MobinScrollReveal({ grabbed }) {
       const triggerY = vh * 0.65;
       setProgress(Math.max(0, Math.min(1, (y - triggerY) / (vh * 3.0))));
       setEntered(y > triggerY);
-      setPanelUp(y > triggerY && y < vh * 4.0);
+      setPanelUp(y > triggerY);
       rafId = requestAnimationFrame(tick);
     }
     rafId = requestAnimationFrame(tick);
