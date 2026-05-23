@@ -15,7 +15,7 @@ function Background() {
     <div className="bg-stage">
       <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"
            xmlns="http://www.w3.org/2000/svg">
-        <defs>
+        <defs>h
           {/* main wash — white at the lower-left fading to medium blue at upper-right */}
           <linearGradient id="wash" x1="0" y1="1" x2="1" y2="0">
             <stop offset="0%"  stopColor="#ffffff" />
@@ -626,7 +626,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "showApps": true
 }/*EDITMODE-END*/;
 
-const ZEEB_WAITLIST_ENDPOINT = "https://script.google.com/macros/s/AKfycbz1XmYwIQpEz15HUhuFjOprWq8Nzc15ARSeEL9AO2ctdWgFe3aedzVLJeKIi3Ce-T6Q/exec";
+const ZEEB_WAITLIST_ENDPOINT = "https://script.google.com/macros/s/AKfycbz1XmYwIQpEz15HUhuFjOprWq8Nzc15ARSeEL9AO2ctdWgFe3aedzVLJeKFKIi3Ce-T6Q/exec";
 
 function App() {
   const [v, setTweak] = (typeof useTweaks === "function")
