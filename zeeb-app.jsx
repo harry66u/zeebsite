@@ -298,7 +298,7 @@ function MobinScrollReveal({ grabbed }) {
         background: "#ffffff", position: "relative",
         minHeight: "100vh", display: "flex",
         alignItems: "center", justifyContent: "center",
-        overflow: "hidden",
+        overflow: "hidden", zIndex: 30,
       }}>
         <div style={{ position: "absolute", inset: "60px 16px", pointerEvents: "none" }}>
           {apps.map((app, i) => (
