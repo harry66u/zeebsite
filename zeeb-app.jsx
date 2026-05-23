@@ -586,7 +586,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
    See apps-script-waitlist.gs in this folder for the script to paste
    into Extensions → Apps Script on your Google Sheet.
    ───────────────────────────────────────────────────────────────── */
-const ZEEB_WAITLIST_ENDPOINT = "https://script.google.com/macros/s/AKfycbz1XmYwIQpEz15HUhuFjOprWq8Nzc15ARSeEL9AO2ctdWgFe3aedzVLJeKIi3Ce-T6Q/exec";
+const ZEEB_WAITLIST_ENDPOINT = "https://script.google.com/macros/s/AKfycbz1XmYwIQpEz15HUhuFjOprWq8Nzc15ARSeEL9AO2ctdWgFe3aedzVLJeKFKIi3Ce-T6Q/exec";
 
 function App() {
   const [v, setTweak] = (typeof useTweaks === "function")
