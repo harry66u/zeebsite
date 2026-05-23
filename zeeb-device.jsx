@@ -135,7 +135,7 @@ function Stylus({ deviceWidth, deviceHeight }) {
   const angle = 14; // degrees, tilted top-right -> bottom-left of contact
 
   // Desktop: vertical on the right edge, tilted clockwise.
-  // Mobile: horizontal across the top of the device, tilted slightly up.
+  // Mobile: diagonal on the left side, tip near device top-left, eraser upper-right.
   const wrapperStyle = mobile
     ? {
         position: "absolute",
@@ -457,7 +457,7 @@ function PanicShield() {
   );
 }
 
-/* (Legacy home-screen grid \u2014 no longer rendered, kept for reference) */
+/* (Legacy home-screen grid — no longer rendered, kept for reference) */
 function HomeScreen({ width, height }) {
   return (
     <div style={{
