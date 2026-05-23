@@ -434,7 +434,7 @@ function AppTile({ size = 80, kind }) {
     instagram: { bg: "linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
                  src: "logos/instagram-icon.svg",                 full: true },
     whatsapp:  { bg: "#25D366", src: "logos/whatsapp-icon.svg",   scale: 0.62, white: true },
-    x:         { bg: "#000000", src: "logos/x-white.svg",         scale: 0.44 },
+    x:         { bg: "#000000", src: "logos/x-white.svg",         scale: 0.70 },
     sleeper:   { bg: "#000000", src: "logos/sleeper.svg",         full: true, cover: true },
     yahoo:     { bg: "#6001D2", src: "logos/yahoo.svg",           full: true },
     espn:      { bg: "#CC0000", src: "logos/espn.svg",            scale: 0.88, white: true },
