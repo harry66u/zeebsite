@@ -249,11 +249,7 @@ function MobinScrollReveal({ grabbed }) {
       const triggerY = vh * 0.65;
       setProgress(Math.max(0, Math.min(1, (y - triggerY) / (vh * 3.0))));
       setEntered(y > triggerY);
-      // Section 2 raised: past the grab trigger, but not yet into section 3.
-      // Section 3 (.waitlist-anchor) starts entering the viewport around y=4vh
-      // (page = stage 100vh + scroll-wrapper 400vh; waitlist top hits the
-      // viewport bottom at y ≈ 400vh).
-      setPanelUp(y > triggerY && y < vh * 4.0);
+      setPanelUp(y > triggerY);
       rafId = requestAnimationFrame(tick);
     }
     rafId = requestAnimationFrame(tick);
