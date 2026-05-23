@@ -3,7 +3,8 @@
    Light reflection on top edge to give it weight. */
 
 function ZeebDevice({ width = 460, height = 225 }) {
-  const BEZEL = 11;
+  const mobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  const BEZEL = mobile ? 18 : 11;
   const screenW = width - BEZEL * 2;
   const screenH = height - BEZEL * 2;
 
@@ -107,7 +108,7 @@ function ZeebDevice({ width = 460, height = 225 }) {
 
           {/* Notes interface — the device looks like a study tool by
               default. A small panic shortcut sits in the corner. */}
-          <NotesScreen width={screenW} height={screenH} />
+          <NotesScreen width={screenW} height={screenH} mobile={mobile} />
 
           {/* glass reflection */}
           <div style={{
@@ -134,16 +135,16 @@ function Stylus({ deviceWidth, deviceHeight }) {
   const angle = 14; // degrees, tilted top-right -> bottom-left of contact
 
   // Desktop: vertical on the right edge, tilted clockwise.
-  // Mobile: horizontal across the top of the device, tilted slightly up.
+  // Mobile: diagonal on the left side, tip near device top-left, eraser upper-right.
   const wrapperStyle = mobile
     ? {
         position: "absolute",
-        top: -Math.round(len / 2) - 4,
-        left: Math.round(deviceWidth / 2 - barrelW / 2),
+        left: Math.round(deviceWidth * 0.18) - Math.round(barrelW * 0.5),
+        top: -Math.round(len * 0.82),
         width: barrelW,
         height: len,
-        transform: `rotate(${-(90 - angle)}deg)`,
-        transformOrigin: "center center",
+        transform: `rotate(${angle}deg)`,
+        transformOrigin: "bottom center",
         zIndex: 2,
         pointerEvents: "none",
         filter: "drop-shadow(0 14px 18px rgba(20,40,90,0.30)) drop-shadow(0 2px 3px rgba(20,40,90,0.20))",
@@ -239,7 +240,7 @@ function Stylus({ deviceWidth, deviceHeight }) {
    TikTok feed peeking in from the side, like one swipe away.
    Top-right: PANIC mode shield with a soft pulse.
    Bottom-right of the notes column: zeeb. brand mark. */
-function NotesScreen({ width, height }) {
+function NotesScreen({ width, height, mobile = false }) {
   const peekW = Math.round(width * 0.32);        // right-side TikTok strip
   const notesW = width - peekW;
   return (
@@ -278,7 +279,7 @@ function NotesScreen({ width, height }) {
           <div style={{
             fontFamily: "'Inter Tight', system-ui, sans-serif",
             fontWeight: 800,
-            fontSize: 14,
+            fontSize: mobile ? 16 : 14,
             letterSpacing: "-0.025em",
             color: "#14161a",
             lineHeight: 1.1,
@@ -305,8 +306,8 @@ function NotesScreen({ width, height }) {
           <div style={{
             position: "absolute", inset: 0,
             backgroundImage: "linear-gradient(to bottom, rgba(30,40,60,0.07) 1px, transparent 1px)",
-            backgroundSize: "100% 24px",
-            backgroundPosition: "0 22px",
+            backgroundSize: mobile ? "100% 26px" : "100% 24px",
+            backgroundPosition: mobile ? "0 24px" : "0 22px",
           }} />
           {/* margin rule */}
           <div style={{
@@ -320,8 +321,8 @@ function NotesScreen({ width, height }) {
             position: "absolute", left: 22, right: 4, top: 2,
             fontFamily: "'Caveat', cursive",
             fontWeight: 600,
-            fontSize: 19,
-            lineHeight: "24px",
+            fontSize: mobile ? 21 : 19,
+            lineHeight: mobile ? "26px" : "24px",
             color: "#1d3a6f",
             letterSpacing: "0.005em",
           }}>
@@ -456,7 +457,7 @@ function PanicShield() {
   );
 }
 
-/* (Legacy home-screen grid \u2014 no longer rendered, kept for reference) */
+/* (Legacy home-screen grid — no longer rendered, kept for reference) */
 function HomeScreen({ width, height }) {
   return (
     <div style={{
