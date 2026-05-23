@@ -284,33 +284,25 @@ function MobinScrollReveal({ grabbed }) {
     return () => clearTimeout(t);
   }, [grabbed, iconsDispersed]);
 
-  // On mobile: render a completely static document-flow section.
-  // No scroll-wrapper, no sticky-section, no CSS class animations.
+  // On mobile: compact natural document layout — text first, icons below.
+  // No viewport-height sections, no absolute positioning, no animations.
   if (mobile) {
     const statStyle = {
       opacity: 1, transform: "none", transition: "none",
       fontFamily: "'Inter', sans-serif", fontWeight: 700,
-      fontSize: "clamp(18px, 5.2vw, 26px)", letterSpacing: "-0.02em",
-      lineHeight: 1.2, margin: "14px 0", color: "#111111",
+      fontSize: "clamp(22px, 6.5vw, 32px)", letterSpacing: "-0.02em",
+      lineHeight: 1.15, margin: "0 0 18px", color: "#111111",
+      display: "block",
     };
     return (
-      <div style={{
-        background: "#ffffff", position: "relative",
-        minHeight: "100vh", display: "flex",
-        alignItems: "center", justifyContent: "center",
-        overflow: "hidden",
-      }}>
-        <div style={{ position: "absolute", inset: "60px 16px", pointerEvents: "none" }}>
+      <div style={{ background: "#ffffff", padding: "52px 24px 48px", textAlign: "center" }}>
+        <p style={statStyle}>Everything they took.</p>
+        <h2 style={statStyle}>On something they can't take.</h2>
+        <p style={{ ...statStyle, margin: 0 }}>A note-taking device. <em>Technically.</em></p>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "14px", marginTop: "40px" }}>
           {apps.map((app, i) => (
-            <div key={i} style={{ position: "absolute", top: app.top, left: app.left }}>
-              <AppTile size={56} kind={app.kind} />
-            </div>
+            <AppTile key={i} size={60} kind={app.kind} />
           ))}
-        </div>
-        <div style={{ position: "relative", zIndex: 10, width: "100%", textAlign: "center", padding: "0 16px" }}>
-          <p style={statStyle}>Everything they took.</p>
-          <h2 style={statStyle}>On something they can't take.</h2>
-          <p style={statStyle}>A note-taking device. <em>Technically.</em></p>
         </div>
       </div>
     );
