@@ -704,6 +704,7 @@ function App() {
       {/* Background — fixed under everything */}
       <Background />
       <div className="bg-vignette" aria-hidden />
+      <div className="bg-spotlight" aria-hidden />
 
       {/* Nav */}
       <header className="nav">
