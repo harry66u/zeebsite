@@ -227,7 +227,7 @@ function MobinScrollReveal({ grabbed }) {
     { kind: "instagram", top: "22%", left: "88%" }, // right edge upper
     { kind: "youtube",   top: "48%", left: "2%"  }, // left edge middle
     { kind: "x",         top: "45%", left: "90%" }, // right edge middle
-    { kind: "chatgpt",   top: "78%", left: "6%"  }, // bottom left
+    { kind: "chatgpt",   top: "82%", left: "38%"  }, // bottom center-left
     { kind: "whatsapp",  top: "80%", left: "82%" }, // bottom right
     { kind: "espn",      top: "85%", left: "42%" }, // bottom center
     { kind: "sleeper",   top: "75%", left: "62%" }, // bottom right area
@@ -235,10 +235,10 @@ function MobinScrollReveal({ grabbed }) {
 
   const [floatData] = useState(() =>
     apps.map(() => ({
-      xAmp: (Math.random() * 8 + 7) * (Math.random() > 0.5 ? 1 : -1),
-      yAmp: (Math.random() * 8 + 7) * (Math.random() > 0.5 ? 1 : -1),
-      xSpeed: 0.0003 + Math.random() * 0.0004,
-      ySpeed: 0.0002 + Math.random() * 0.0004,
+      xAmp: (Math.random() * 40 + 25) * (Math.random() > 0.5 ? 1 : -1),
+      yAmp: (Math.random() * 40 + 25) * (Math.random() > 0.5 ? 1 : -1),
+      xSpeed: 0.0006 + Math.random() * 0.0008,
+      ySpeed: 0.0005 + Math.random() * 0.0007,
       xPhase: Math.random() * Math.PI * 2,
       yPhase: Math.random() * Math.PI * 2,
     }))

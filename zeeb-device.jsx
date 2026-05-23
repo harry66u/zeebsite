@@ -122,13 +122,21 @@ function ZeebDevice({ width = 460, height = 225 }) {
 function Stylus({ deviceWidth, deviceHeight }) {
   const len = Math.round(deviceWidth * 0.7);
   const tipW = 5;
-  const barrelW = 9;
+  const barrelW = 14;
   const angle = 14;
+
+  // Position wrapper so the tip lands on the HIDE button (top-right of screen)
+  const bezel = deviceWidth >= 500 ? 18 : 11;
+  const halfLen = len / 2;
+  const sinA = Math.sin((90 - angle) * Math.PI / 180);
+  const cosA = Math.cos((90 - angle) * Math.PI / 180);
+  const tipX = deviceWidth - bezel - 24;
+  const tipY = bezel + 14;
 
   const wrapperStyle = {
     position: "absolute",
-    top: -Math.round(len / 2) - 4,
-    left: Math.round(deviceWidth / 2 - barrelW / 2),
+    top: Math.round(tipY - cosA * halfLen - halfLen),
+    left: Math.round(tipX - sinA * halfLen - barrelW / 2),
     width: barrelW,
     height: len,
     transform: `rotate(${-(90 - angle)}deg)`,
