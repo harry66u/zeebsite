@@ -494,6 +494,39 @@ function FloatingApps() {
 }
 
 /* ──────────────────────────────────────────────────────────────────
+   GHOST ICONS — faint background icons in Section 3 waitlist area
+   ────────────────────────────────────────────────────────────────── */
+
+function GhostIcons() {
+  const ghosts = [
+    { kind: "tiktok",    top: "8%",  left: "4%",   opacity: 0.07, dur: "22s", delay: "0s"   },
+    { kind: "youtube",   top: "12%", right: "5%",  opacity: 0.08, dur: "19s", delay: "-7s"  },
+    { kind: "snapchat",  top: "40%", left: "2%",   opacity: 0.07, dur: "25s", delay: "-13s" },
+    { kind: "instagram", top: "58%", right: "4%",  opacity: 0.09, dur: "20s", delay: "-4s"  },
+    { kind: "whatsapp",  top: "78%", left: "7%",   opacity: 0.07, dur: "18s", delay: "-9s"  },
+    { kind: "x",         top: "82%", right: "8%",  opacity: 0.08, dur: "23s", delay: "-2s"  },
+    { kind: "espn",      top: "22%", right: "12%", opacity: 0.07, dur: "21s", delay: "-16s" },
+    { kind: "yahoo",     top: "50%", left: "10%",  opacity: 0.06, dur: "17s", delay: "-6s"  },
+    { kind: "sleeper",   top: "70%", right: "15%", opacity: 0.08, dur: "26s", delay: "-11s" },
+    { kind: "chatgpt",   top: "32%", left: "20%",  opacity: 0.07, dur: "24s", delay: "-3s"  },
+  ];
+  return (
+    <div className="ghost-icons" aria-hidden="true">
+      {ghosts.map((g, i) => (
+        <div key={i} className="ghost-icon" style={{
+          top: g.top, left: g.left, right: g.right,
+          opacity: g.opacity,
+          animationDuration: g.dur,
+          animationDelay: g.delay,
+        }}>
+          <AppTile size={72} kind={g.kind} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────
    SOCIAL PROOF AVATARS
    ────────────────────────────────────────────────────────────────── */
 
@@ -648,6 +681,7 @@ function App() {
       <MobinScrollReveal grabbed={grabbed} />
 
       <section className="waitlist-anchor">
+        <GhostIcons />
         <div className="waitlist">
           <h1>The loophole is real.</h1>
           <p className="sub">
