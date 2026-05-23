@@ -420,17 +420,10 @@ function AppTile({ size = 80, kind }) {
     boxShadow: "none",
   };
 
-  // File-backed icons. Flags:
-  //   full: true  → SVG already includes its own square brand background
-  //                 (snapchat, instagram, sleeper). Render at 100% to fill.
-  //   cover: true → use object-fit: cover (sleeper.svg is a wide canvas with
-  //                 the logo in the center square — cover crops to it).
-  //   white: true → whiten the glyph via filter (whatsapp.svg is the green
-  //                 glyph; we want it white on the green tile).
   const CFG = {
     tiktok:    { bg: "#010101", src: "logos/tiktok-icon-dark.svg", scale: 0.76 },
     snapchat:  { bg: "#FFFC00", src: "logos/snapchat.svg",        full: true },
-    youtube:   { bg: "#FF0000", src: "logos/youtube.svg",         full: true },
+    youtube:   { bg: "white",   src: "logos/youtube.svg",         full: true },
     instagram: { bg: "linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
                  src: "logos/instagram-icon.svg",                 full: true },
     whatsapp:  { bg: "#25D366", src: "logos/whatsapp-icon.svg",   scale: 0.62, white: true },
@@ -456,18 +449,10 @@ function AppTile({ size = 80, kind }) {
 
 /* ──────────────────────────────────────────────────────────────────
    FLOATING APPS — positioned around the device.
-   Each app gets:
-     - bobbing animation (handled by CSS keyframes, --dx, --dy, --rot)
-     - scatter exit transform (driven by --p)
-   Two-element nesting lets us combine those two without conflict.
    ────────────────────────────────────────────────────────────────── */
 
 function FloatingApps() {
-  // Hand-placed so the apps frame the device without crowding the center.
-  // Positions are in percent so they respond to viewport.
-  // exitX/Y in px drive the scatter direction on scroll.
   const apps = [
-    // top-left to bottom-right, alternating sides
     { kind: "tiktok",    left: "11%", top: "20%",  size: 80, rot: -8, dur: 5.5, delay: 0.0, dx: 4,  dy: -16, exitX: -560, exitY: -360, exitR: -45 },
     { kind: "snap",      left: "8%",  top: "55%",  size: 64, rot: 6,  dur: 6.4, delay: 0.6, dx: -3, dy: -12, exitX: -640, exitY:  120, exitR:  30, hide: "sm" },
     { kind: "youtube",   left: "22%", top: "75%",  size: 70, rot: 4,  dur: 6.0, delay: 1.0, dx: 6,  dy: -10, exitX: -360, exitY:  520, exitR: -25 },
@@ -486,13 +471,11 @@ function FloatingApps() {
                left: a.left, top: a.top,
                transform: "translate(-50%, -50%)",
              }}>
-          {/* scatter wrapper — driven by --p on document root */}
           <div className="scatter" style={{
             "--exitX": `${a.exitX}px`,
             "--exitY": `${a.exitY}px`,
             "--exitR": `${a.exitR}deg`,
           }}>
-            {/* bobbing wrapper — independent timing per app */}
             <div className="bob" style={{
               "--dx": `${a.dx}px`,
               "--dy": `${a.dy}px`,
@@ -541,23 +524,13 @@ function Avatars() {
 }
 
 /* ──────────────────────────────────────────────────────────────────
-   SCROLL CONTROLLER — turns scrollY into two progress values
-   (p for the hero exit, p2 for the waitlist enter) and sets them
-   as CSS custom properties on :root.
+   SCROLL CONTROLLER
    ────────────────────────────────────────────────────────────────── */
 
 function useHeroGrab() {
-  // Two things in one hook, both driven by scroll position:
-  //   --shrink (0..1) — set as a CSS var. The device scales linearly from
-  //                     100% down to 60% over the first 65% of section 1,
-  //                     to read as "pocket-sized."
-  //   grabbed (bool)  — once past the trigger (65vh), the CSS choreography
-  //                     (hand reaches in, lifts the now-shrunken device,
-  //                     apps fly in from the edges) plays automatically.
-  //                     Scrolling back up reverses everything fast.
   const [grabbed, setGrabbed] = useState(false);
   useEffect(() => {
-    if (window.innerWidth <= 768) return; // no scroll animation on mobile
+    if (window.innerWidth <= 768) return;
     let raf = 0;
     function tick() {
       const y =
@@ -585,13 +558,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "showApps": true
 }/*EDITMODE-END*/;
 
-/* ─────────────────────────────────────────────────────────────────
-   WAITLIST ENDPOINT
-   Paste the URL from your deployed Google Apps Script Web App here.
-   See apps-script-waitlist.gs in this folder for the script to paste
-   into Extensions → Apps Script on your Google Sheet.
-   ───────────────────────────────────────────────────────────────── */
-const ZEEB_WAITLIST_ENDPOINT = "https://script.google.com/macros/s/AKfycbz1XmYwIQpEz15HUhuFjOprWq8Nzc15ARSeEL9AO2ctdWgFe3aedzVLJeKFKIi3Ce-T6Q/exec";
+const ZEEB_WAITLIST_ENDPOINT = "https://script.google.com/macros/s/AKfycbz1XmYwIQpEz15HUhuFjOprWq8Nzc15ARSeEL9AO2ctdWgFe3aedzVLJeKIi3Ce-T6Q/exec";
 
 function App() {
   const [v, setTweak] = (typeof useTweaks === "function")
@@ -600,10 +567,6 @@ function App() {
 
   const grabbed = useHeroGrab();
 
-  // Lock scroll for the duration of the hand animation. We use overflow
-  // only (NOT position:fixed) — fixing the body resets window.scrollY to 0,
-  // which makes useHeroGrab see y=0 and flip `grabbed` back to false,
-  // creating a loop that traps the page at the trigger point.
   useEffect(() => {
     if (!grabbed || window.innerWidth <= 768) return;
     document.body.style.overflow = 'hidden';
@@ -625,29 +588,20 @@ function App() {
     if (!cleanEmail || status === "loading") return;
     setStatus("loading");
     try {
-      // Apps Script redirects POST to a different domain, dropping the body.
-      // GET with params in the URL survives the redirect reliably.
       if (ZEEB_WAITLIST_ENDPOINT && !ZEEB_WAITLIST_ENDPOINT.startsWith("PASTE")) {
         const url = new URL(ZEEB_WAITLIST_ENDPOINT);
         url.searchParams.set("email", cleanEmail);
         url.searchParams.set("timestamp", new Date().toISOString());
         await fetch(url.toString(), { mode: "no-cors" });
       } else {
-        // Endpoint not configured yet — fall back to a brief delay so the
-        // UI still flows correctly during local testing.
         await new Promise(r => setTimeout(r, 600));
       }
     } catch (err) {
-      // no-cors requests can't fail with a CORS error; any real network
-      // failure (offline etc.) still gets logged for debugging.
       console.error("Waitlist submission failed:", err);
     }
     setStatus("success");
   }
 
-  // Compute the device size responsively at mount + resize.
-  // The new form factor is Switch Lite-ish — wider than tall, pocketable.
-  // Aspect ~ 2.05:1 (height ≈ width * 0.49).
   const [deviceW, setDeviceW] = useState(780);
   useEffect(() => {
     function recalc() {
@@ -663,12 +617,10 @@ function App() {
 
   return (
     <div className="page">
-      {/* Background — fixed under everything */}
       <Background />
       <div className="bg-vignette" aria-hidden />
       <div className="bg-spotlight" aria-hidden />
 
-      {/* Nav */}
       <header className="nav">
         <a className="wordmark" href="#" aria-label="zeeb">
           <span className="glyphs">zeeb</span><span className="dot" />
@@ -679,13 +631,8 @@ function App() {
         </span>
       </header>
 
-      {/* SECTION 1 — hero. Device + stylus, soft glow. Crossing the trigger
-          point auto-plays the hand reaching in and carrying the device off. */}
       <section className={"stage" + (grabbed ? " grabbed" : "")}>
         <div className="device-anchor">
-          {/* stage-content scales with scroll (the "shrink"), then the
-              whole anchor lifts off when grabbed — hand and device stay
-              locked together since they're inside the same shrink layer */}
           <div className="stage-content">
             <div className="device-glow" aria-hidden />
             <div className="hand-wrap" aria-hidden>
@@ -698,10 +645,8 @@ function App() {
         </div>
       </section>
 
-      {/* SECTION 2 — Mobbin-style scroll reveal with expanding logo field. */}
       <MobinScrollReveal grabbed={grabbed} />
 
-      {/* SECTION 3 — signup. */}
       <section className="waitlist-anchor">
         <div className="waitlist">
           <h1>The loophole is real.</h1>
@@ -752,7 +697,6 @@ function App() {
         </div>
       </section>
 
-      {/* Tweaks */}
       <TweaksPanel title="Tweaks">
         <TweakSection title="Hero">
           <TweakToggle label="Show floating apps" value={v.showApps} onChange={x => setTweak("showApps", x)} />
