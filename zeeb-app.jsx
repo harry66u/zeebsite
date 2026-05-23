@@ -414,8 +414,7 @@ function AppTile({ size = 80, kind }) {
     flexShrink: 0,
     position: "relative",
     overflow: "hidden",
-    boxShadow:
-      "inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.08), 0 2px 4px rgba(20,40,90,0.08)",
+    boxShadow: "none",
   };
 
   // File-backed icons. Flags:
