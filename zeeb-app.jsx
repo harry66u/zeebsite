@@ -733,11 +733,11 @@ function App() {
                   display: "inline-block",
                 }} />
                 <span style={{
-                  fontFamily: "'Instrument Serif', serif",
-                  fontStyle: "italic",
-                  fontSize: 17,
+                  fontFamily: "'Inter Tight', system-ui, sans-serif",
+                  fontWeight: 500,
+                  fontSize: 16,
                   color: "var(--ink)",
-                }}>you're in. watch your inbox.</span>
+                }}>Spot reserved. We'll hit you when it's ready.</span>
               </div>
             ) : (
               <div className="row">
@@ -746,7 +746,7 @@ function App() {
                 <button type="submit" disabled={status === "loading"}>
                   {status === "loading" ? "…" : (
                     <>
-                      <span style={{ fontFamily: "'Inter Tight', system-ui, sans-serif", fontWeight: 700, letterSpacing: "-0.01em" }}>I'm in</span>
+                      <span style={{ fontFamily: "'Inter Tight', system-ui, sans-serif", fontWeight: 700, letterSpacing: "-0.01em" }}>Reserve mine</span>
                       <span className="arrow">
                         <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
                           <path d="M2 6h7M6 3l3 3-3 3" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
