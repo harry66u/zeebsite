@@ -200,8 +200,9 @@ function RevealApps() {
    and a staggered, scroll-driven stat reveal. */
 function MobinScrollReveal({ grabbed }) {
   const wrapperRef = useRef(null);
-  const [progress, setProgress] = useState(0);
-  const [entered, setEntered] = useState(false);
+  const mobile = window.innerWidth <= 768;
+  const [progress, setProgress] = useState(mobile ? 1 : 0);
+  const [entered, setEntered] = useState(mobile);
   const [time, setTime] = useState(0);
 
   // Exact final positions provided — corner-positioned (top/left = icon's
@@ -235,8 +236,14 @@ function MobinScrollReveal({ grabbed }) {
   // trigger and spans ~3 viewports. `panelUp` keeps the white section 2
   // raised while the user is in its region, then drops it back down as
   // section 3 enters so the page bg-stage shows through again.
-  const [panelUp, setPanelUp] = useState(false);
+  const [panelUp, setPanelUp] = useState(mobile);
   useEffect(() => {
+    if (mobile) {
+      ['stat-apps', 'stat-screens', 'stat-flows'].forEach(id =>
+        document.getElementById(id)?.classList.add('visible')
+      );
+      return;
+    }
     let rafId = null;
     function tick(currentTime) {
       setTime(currentTime);
@@ -259,9 +266,9 @@ function MobinScrollReveal({ grabbed }) {
   // Icons disperse from center → final positions on the FIRST section
   // reveal. Once dispersed, they stay dispersed forever — scrolling back
   // up doesn't re-cluster them.
-  const [iconsDispersed, setIconsDispersed] = useState(false);
+  const [iconsDispersed, setIconsDispersed] = useState(mobile);
   useEffect(() => {
-    if (!grabbed || iconsDispersed) return;
+    if (mobile || !grabbed || iconsDispersed) return;
     // Wait until the white panel is partway through its rise (~0.7s) so
     // the icons appear to be inside it as they spring out.
     const t = setTimeout(() => setIconsDispersed(true), 700);
@@ -288,8 +295,8 @@ function MobinScrollReveal({ grabbed }) {
         <div className="logo-background">
           {apps.map((app, i) => {
             const fd = floatData[i];
-            const fx = Math.sin(time * fd.xSpeed + fd.xPhase) * fd.xAmp;
-            const fy = Math.cos(time * fd.ySpeed + fd.yPhase) * fd.yAmp;
+            const fx = mobile ? 0 : Math.sin(time * fd.xSpeed + fd.xPhase) * fd.xAmp;
+            const fy = mobile ? 0 : Math.cos(time * fd.ySpeed + fd.yPhase) * fd.yAmp;
             // Before the first reveal: clustered at center. After: each
             // at its declared corner position. Springy transition on
             // top/left handles the synchronized burst outward.
@@ -590,6 +597,7 @@ function useHeroGrab() {
   //                     Scrolling back up reverses everything fast.
   const [grabbed, setGrabbed] = useState(false);
   useEffect(() => {
+    if (window.innerWidth <= 768) return; // no scroll animation on mobile
     let raf = 0;
     function tick() {
       const y =
@@ -637,7 +645,7 @@ function App() {
   // which makes useHeroGrab see y=0 and flip `grabbed` back to false,
   // creating a loop that traps the page at the trigger point.
   useEffect(() => {
-    if (!grabbed) return;
+    if (!grabbed || window.innerWidth <= 768) return;
     document.body.style.overflow = 'hidden';
     const t = setTimeout(() => {
       document.body.style.overflow = '';

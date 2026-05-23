@@ -589,11 +589,58 @@
   }
 
   @media (max-width: 768px) {
+    /* ── SECTION 1: static device, no scroll animation ── */
+    .stage {
+      position: relative !important; /* leave sticky scroll pinning */
+      height: 100svh;
+      overflow: hidden;
+    }
+    .stage-content {
+      transform: scale(1) !important; /* ignore --shrink CSS var */
+    }
+    .hand-wrap { display: none !important; }
+    .device-anchor {
+      transition: none !important;
+      transform: translate(-50%, -50%) !important;
+      opacity: 1 !important;
+    }
+    /* override grabbed-state animations */
+    .stage.grabbed .device-anchor {
+      transform: translate(-50%, -50%) !important;
+      opacity: 1 !important;
+      transition: none !important;
+    }
+
+    /* ── SECTION 2: normal document flow, static icons, text visible ── */
+    .scroll-wrapper {
+      height: auto !important;
+      min-height: 100svh;
+    }
+    .sticky-section,
+    .sticky-section.in {
+      position: relative !important;
+      transform: none !important;
+      transition: none !important;
+      min-height: 100svh;
+    }
     .sticky-section {
       padding: 0 24px;
     }
     .logo-background {
       inset: 80px 24px;
+    }
+    /* icons: static, no floating */
+    .app-logo-wrapper {
+      transition: none !important;
+    }
+    .app-float {
+      transform: none !important;
+    }
+    /* stats: all visible immediately */
+    .stat-row {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
     }
   }
 
