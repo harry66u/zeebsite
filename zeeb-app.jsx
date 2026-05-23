@@ -217,7 +217,7 @@ function MobinScrollReveal({ grabbed }) {
     { kind: "instagram", top: "16%", left: "82%" },
     { kind: "x",         top: "68%", left: "0%"  },
     { kind: "sleeper",   top: "70%", left: "82%" },
-    { kind: "spotify",   top: "86%", left: "4%"  },
+    { kind: "chatgpt",   top: "86%", left: "4%"  },
     { kind: "espn",      top: "88%", left: "42%" },
     { kind: "whatsapp",  top: "86%", left: "80%" },
   ] : [
@@ -227,7 +227,7 @@ function MobinScrollReveal({ grabbed }) {
     { kind: "instagram", top: "22%", left: "88%" }, // right edge upper
     { kind: "youtube",   top: "48%", left: "2%"  }, // left edge middle
     { kind: "x",         top: "45%", left: "90%" }, // right edge middle
-    { kind: "spotify",   top: "78%", left: "6%"  }, // bottom left
+    { kind: "chatgpt",   top: "78%", left: "6%"  }, // bottom left
     { kind: "whatsapp",  top: "80%", left: "82%" }, // bottom right
     { kind: "espn",      top: "85%", left: "42%" }, // bottom center
     { kind: "sleeper",   top: "75%", left: "62%" }, // bottom right area
@@ -245,17 +245,9 @@ function MobinScrollReveal({ grabbed }) {
   );
 
   // progress = 0..1 driving which stat line is "active". Starts at the grab
-  // trigger and spans ~3 viewports. `panelUp` keeps the white section 2
-  // raised while the user is in its region, then drops it back down as
-  // section 3 enters so the page bg-stage shows through again.
   const [panelUp, setPanelUp] = useState(mobile);
   useEffect(() => {
-    if (mobile) {
-      ['stat-apps', 'stat-screens', 'stat-flows'].forEach(id =>
-        document.getElementById(id)?.classList.add('visible')
-      );
-      return;
-    }
+    if (mobile) return;
     let rafId = null;
     function tick(currentTime) {
       setTime(currentTime);
@@ -287,19 +279,6 @@ function MobinScrollReveal({ grabbed }) {
     return () => clearTimeout(t);
   }, [grabbed, iconsDispersed]);
 
-  // Imperative DOM updater (matches the spec exactly). Lines latch on at
-  // 5% / 35% / 65% progress; once .visible is added, it's never removed.
-  useEffect(() => {
-    function updateStats(p) {
-      const line1 = document.getElementById('stat-apps');
-      const line2 = document.getElementById('stat-screens');
-      const line3 = document.getElementById('stat-flows');
-      if (line1 && p >= 0.05) line1.classList.add('visible');
-      if (line2 && p >= 0.35) line2.classList.add('visible');
-      if (line3 && p >= 0.65) line3.classList.add('visible');
-    }
-    updateStats(progress);
-  }, [progress]);
 
   return (
     <div className="scroll-wrapper" ref={wrapperRef}>
@@ -326,13 +305,13 @@ function MobinScrollReveal({ grabbed }) {
         </div>
 
         <div className="stats-center">
-          <p id="stat-apps" className={"stat-row" + (mobile ? " visible" : "")}>
+          <p id="stat-apps" className="stat-row visible">
             Everything they took.
           </p>
-          <h2 id="stat-screens" className={"stat-row" + (mobile ? " visible" : "")}>
+          <h2 id="stat-screens" className="stat-row visible">
             On something they can't take.
           </h2>
-          <p id="stat-flows" className={"stat-row" + (mobile ? " visible" : "")}>
+          <p id="stat-flows" className="stat-row visible">
             A note-taking device. <em>Technically.</em>
           </p>
         </div>
@@ -452,46 +431,10 @@ function AppTile({ size = 80, kind }) {
     whatsapp:  { bg: "#25D366", src: "logos/whatsapp-icon.svg",   scale: 0.62, white: true },
     x:         { bg: "#000000", src: "logos/x-white.svg",         scale: 0.44 },
     sleeper:   { bg: "#000000", src: "logos/sleeper.svg",         full: true, cover: true },
+    yahoo:     { bg: "#6001D2", src: "logos/yahoo.svg",           scale: 0.72 },
+    espn:      { bg: "#CC0000", src: "logos/espn.svg",            scale: 0.72 },
+    chatgpt:   { bg: "#000000", src: "logos/chatgpt.svg",         scale: 0.68 },
   };
-
-  // Inline-rendered icons (Clearbit's free logo API is deprecated, so
-  // remote-loading was unreliable — we draw these three locally instead).
-  if (kind === "spotify") {
-    return (
-      <div style={{ ...base, background: "#1DB954" }}>
-        <svg width={size * 0.66} height={size * 0.66} viewBox="0 0 40 40" fill="none">
-          <circle cx="20" cy="20" r="17" fill="#1DB954" />
-          <path d="M9 16.5 Q20 11 31.5 17" stroke="#000" strokeWidth="3.3" strokeLinecap="round" />
-          <path d="M11 22 Q20 18 29 23"   stroke="#000" strokeWidth="2.9" strokeLinecap="round" />
-          <path d="M13 27 Q20 24 27 28"   stroke="#000" strokeWidth="2.5" strokeLinecap="round" />
-        </svg>
-      </div>
-    );
-  }
-  if (kind === "espn") {
-    return (
-      <div style={{ ...base, background: "#CC0000" }}>
-        <span style={{
-          color: "white",
-          fontFamily: "'Inter Tight', system-ui, sans-serif",
-          fontStyle: "italic", fontWeight: 800,
-          fontSize: size * 0.26, letterSpacing: "-0.045em",
-        }}>ESPN</span>
-      </div>
-    );
-  }
-  if (kind === "yahoo") {
-    return (
-      <div style={{ ...base, background: "#6001D2" }}>
-        <span style={{
-          color: "white",
-          fontFamily: "'Inter Tight', system-ui, sans-serif",
-          fontStyle: "italic", fontWeight: 800,
-          fontSize: size * 0.5, letterSpacing: "-0.05em",
-        }}>Y!</span>
-      </div>
-    );
-  }
 
   const c = CFG[kind] || { bg: "#888888", src: "" };
   const imgStyle = c.full
