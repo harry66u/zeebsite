@@ -200,8 +200,6 @@ function RevealApps() {
    and a staggered, scroll-driven stat reveal. */
 function MobinScrollReveal({ grabbed }) {
   const wrapperRef = useRef(null);
-  const [progress, setProgress] = useState(0);
-  const [entered, setEntered] = useState(false);
   const [time, setTime] = useState(0);
 
   // Exact final positions provided — corner-positioned (top/left = icon's
@@ -231,64 +229,47 @@ function MobinScrollReveal({ grabbed }) {
     }))
   );
 
-  // progress = 0..1 driving which stat line is "active". Starts at the grab
-  // trigger and spans ~3 viewports. `panelUp` keeps the white section 2
-  // raised while the user is in its region, then drops it back down as
-  // section 3 enters so the page bg-stage shows through again.
-  const [panelUp, setPanelUp] = useState(false);
   useEffect(() => {
     let rafId = null;
     function tick(currentTime) {
       setTime(currentTime);
-      const y =
-        window.scrollY ||
-        document.documentElement.scrollTop ||
-        document.body.scrollTop ||
-        0;
-      const vh = window.innerHeight;
-      const triggerY = vh * 0.65;
-      setProgress(Math.max(0, Math.min(1, (y - triggerY) / (vh * 3.0))));
-      setEntered(y > triggerY);
-      // Section 2 raised: past the grab trigger, but not yet into section 3.
-      // Section 3 (.waitlist-anchor) starts entering the viewport around y=4vh
-      // (page = stage 100vh + scroll-wrapper 400vh; waitlist top hits the
-      // viewport bottom at y ≈ 400vh).
-      setPanelUp(y > triggerY && y < vh * 4.0);
       rafId = requestAnimationFrame(tick);
     }
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
   }, []);
 
-  // Icons disperse from center → final positions on the FIRST section
-  // reveal. Once dispersed, they stay dispersed forever — scrolling back
-  // up doesn't re-cluster them.
   const [iconsDispersed, setIconsDispersed] = useState(false);
   useEffect(() => {
     if (!grabbed || iconsDispersed) return;
-    // Wait until the white panel is partway through its rise (~0.7s) so
-    // the icons appear to be inside it as they spring out.
     const t = setTimeout(() => setIconsDispersed(true), 700);
     return () => clearTimeout(t);
   }, [grabbed, iconsDispersed]);
 
-  // Imperative DOM updater (matches the spec exactly). Lines latch on at
-  // 5% / 35% / 65% progress; once .visible is added, it's never removed.
   useEffect(() => {
-    function updateStats(p) {
-      const line1 = document.getElementById('stat-apps');
-      const line2 = document.getElementById('stat-screens');
-      const line3 = document.getElementById('stat-flows');
-      if (line1 && p >= 0.05) line1.classList.add('visible');
-      if (line2 && p >= 0.35) line2.classList.add('visible');
-      if (line3 && p >= 0.65) line3.classList.add('visible');
-    }
-    updateStats(progress);
-  }, [progress]);
+    const section = wrapperRef.current;
+    if (!section) return;
+    const ids = ['stat-apps', 'stat-screens', 'stat-flows'];
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          ids.forEach((id, i) => {
+            setTimeout(() => {
+              document.getElementById(id)?.classList.add('visible');
+            }, i * 400);
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="scroll-wrapper" ref={wrapperRef}>
-      <section className={"sticky-section" + (panelUp ? " in" : "")}>
+      <section className="sticky-section">
         <div className="logo-background">
           {apps.map((app, i) => {
             const fd = floatData[i];
@@ -636,9 +617,6 @@ function App() {
     : [TWEAK_DEFAULTS, () => {}];
 
   const grabbed = useHeroGrab();
-  // Section 2's white panel slides up via a CSS translateY transition on
-  // .sticky-section (controlled by the `.in` class). The hand-lift and
-  // the panel-rise are pure CSS, kept in sync by matching durations.
 
   // Lock scroll for the duration of the hand animation. We use overflow
   // only (NOT position:fixed) — fixing the body resets window.scrollY to 0,
@@ -743,9 +721,7 @@ function App() {
         </div>
       </section>
 
-      {/* SECTION 2 — Mobbin-style scroll reveal with expanding logo field.
-          .sticky-section is position:fixed and slides up via translateY
-          when `grabbed` flips true, in sync with the hand lift. */}
+      {/* SECTION 2 — Mobbin-style scroll reveal with expanding logo field. */}
       <MobinScrollReveal grabbed={grabbed} />
 
       {/* SECTION 3 — signup. */}
