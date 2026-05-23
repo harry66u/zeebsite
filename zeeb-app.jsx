@@ -303,7 +303,7 @@ function MobinScrollReveal({ grabbed }) {
         <div style={{ position: "absolute", inset: "60px 16px", pointerEvents: "none" }}>
           {apps.map((app, i) => (
             <div key={i} className="app-logo-wrapper">
-              <AppTile size={56} kind={app.kind} />
+              <AppTile size={70} kind={app.kind} />
             </div>
           ))}
         </div>
