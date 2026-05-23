@@ -19,42 +19,75 @@
  * Every submission from the site appends one row: timestamp + email.
  */
 
+function _parseParams(e) {
+  var email = "", ts = new Date().toISOString();
+
+  // 1. URL params (GET, or POST where body was also query-encoded)
+  if (e && e.parameter && e.parameter.email) {
+    email = e.parameter.email;
+    ts = e.parameter.timestamp || ts;
+    return { email: email, ts: ts };
+  }
+
+  // 2. Form-encoded POST body (sendBeacon / fetch POST with URLSearchParams)
+  if (e && e.postData && e.postData.contents) {
+    try {
+      var pairs = e.postData.contents.split("&");
+      var params = {};
+      pairs.forEach(function(pair) {
+        var kv = pair.split("=");
+        if (kv.length === 2) {
+          params[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1].replace(/\+/g, " "));
+        }
+      });
+      if (params.email) {
+        email = params.email;
+        ts = params.timestamp || ts;
+        return { email: email, ts: ts };
+      }
+    } catch (err) {}
+  }
+
+  // 3. JSON body fallback
+  if (e && e.postData && e.postData.type === "application/json") {
+    try {
+      var data = JSON.parse(e.postData.contents);
+      if (data.email) {
+        email = data.email;
+        ts = data.timestamp || ts;
+        return { email: email, ts: ts };
+      }
+    } catch (err) {}
+  }
+
+  return { email: "", ts: ts };
+}
+
 function doPost(e) {
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName("Waitlist") || ss.getActiveSheet();
-
-    var email = (e && e.parameter && e.parameter.email) || "";
-    var ts    = (e && e.parameter && e.parameter.timestamp) || new Date().toISOString();
-
-    // Basic email sanity check — discards obvious junk.
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    var p = _parseParams(e);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)) {
       return _json({ ok: false, error: "invalid_email" });
     }
-
-    sheet.appendRow([ts, email]);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet()
+                  .getSheetByName("Waitlist") || SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    sheet.appendRow([p.ts, p.email]);
     return _json({ ok: true });
   } catch (err) {
     return _json({ ok: false, error: String(err) });
   }
 }
 
-// Handles submissions sent as GET (params in URL — survives the Apps Script
-// redirect that drops POST bodies).
 function doGet(e) {
-  var email = (e && e.parameter && e.parameter.email) || "";
-  if (!email) return _json({ ok: true, ping: "zeeb-waitlist" });
-
+  var p = _parseParams(e);
+  if (!p.email) return _json({ ok: true, ping: "zeeb-waitlist" });
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName("Waitlist") || ss.getActiveSheet();
-    var ts = (e && e.parameter && e.parameter.timestamp) || new Date().toISOString();
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)) {
       return _json({ ok: false, error: "invalid_email" });
     }
-
-    sheet.appendRow([ts, email]);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet()
+                  .getSheetByName("Waitlist") || SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    sheet.appendRow([p.ts, p.email]);
     return _json({ ok: true });
   } catch (err) {
     return _json({ ok: false, error: String(err) });
