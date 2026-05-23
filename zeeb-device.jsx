@@ -236,7 +236,7 @@ function NotesScreen({ width, height, mobile = false }) {
         borderRight: "1px solid rgba(20,30,50,0.08)",
       }}>
         <div style={{
-          position: "absolute", top: mobile ? 8 : 18, left: 10, right: 10,
+          position: "absolute", top: mobile ? 8 : 12, left: 10, right: 10,
           display: "flex", alignItems: "center", gap: 6,
         }}>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
@@ -245,7 +245,7 @@ function NotesScreen({ width, height, mobile = false }) {
           <span style={{ fontSize: 9, color: "#7a7e88", fontWeight: 500 }}>Notes</span>
         </div>
 
-        <div style={{ position: "absolute", top: mobile ? 24 : 52, left: 12, right: 12 }}>
+        <div style={{ position: "absolute", top: mobile ? 24 : 36, left: 12, right: 12 }}>
           <div style={{
             fontFamily: "'Inter Tight', system-ui, sans-serif",
             fontWeight: 800,
@@ -268,14 +268,14 @@ function NotesScreen({ width, height, mobile = false }) {
 
         <div style={{
           position: "absolute",
-          top: mobile ? 52 : 120, left: 12, right: 8, bottom: mobile ? 14 : 30,
+          top: mobile ? 52 : 96, left: 12, right: 8, bottom: mobile ? 14 : 8,
           overflow: "hidden",
         }}>
           <div style={{
             position: "absolute", inset: 0,
             backgroundImage: "linear-gradient(to bottom, rgba(30,40,60,0.07) 1px, transparent 1px)",
-            backgroundSize: mobile ? "100% 24px" : "100% 52px",
-            backgroundPosition: mobile ? "0 22px" : "0 50px",
+            backgroundSize: mobile ? "100% 24px" : "100% 46px",
+            backgroundPosition: mobile ? "0 22px" : "0 44px",
           }} />
           <div style={{
             position: "absolute", top: 0, bottom: 0, left: 14,
@@ -286,7 +286,7 @@ function NotesScreen({ width, height, mobile = false }) {
             fontFamily: "'Caveat', cursive",
             fontWeight: 600,
             fontSize: mobile ? 19 : 40,
-            lineHeight: mobile ? "24px" : "52px",
+            lineHeight: mobile ? "24px" : "46px",
             color: "#1d3a6f",
             letterSpacing: "0.005em",
           }}>
