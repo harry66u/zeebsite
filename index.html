@@ -507,11 +507,11 @@
        hand-reach phase, so the white panel begins rising as the hand
        starts carrying the device upward — one fluid motion. */
     transform: translateY(100vh);
-    transition: transform 1.3s cubic-bezier(0.5, 0, 0.3, 1) 0.5s;
     will-change: transform;
   }
   .sticky-section.in {
     transform: translateY(0);
+    transition: transform 1.3s cubic-bezier(0.5, 0, 0.3, 1) 0.5s;
   }
 
   .logo-background {
