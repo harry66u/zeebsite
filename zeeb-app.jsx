@@ -258,9 +258,14 @@ function MobinScrollReveal({ grabbed }) {
         0;
       const vh = window.innerHeight;
       const triggerY = vh * 0.65;
-      setProgress(Math.max(0, Math.min(1, (y - triggerY) / (vh * 3.0))));
+      const p = Math.max(0, Math.min(1, (y - triggerY) / (vh * 3.0)));
+      setProgress(p);
       setEntered(y > triggerY);
       setPanelUp(y > triggerY);
+      // Reveal stat rows as user scrolls through section 2
+      if (p >= 0.05) document.getElementById('stat-apps')?.classList.add('visible');
+      if (p >= 0.35) document.getElementById('stat-screens')?.classList.add('visible');
+      if (p >= 0.65) document.getElementById('stat-flows')?.classList.add('visible');
       rafId = requestAnimationFrame(tick);
     }
     rafId = requestAnimationFrame(tick);
@@ -305,13 +310,13 @@ function MobinScrollReveal({ grabbed }) {
         </div>
 
         <div className="stats-center">
-          <p id="stat-apps" className="stat-row visible">
+          <p id="stat-apps" className={"stat-row" + (mobile ? " visible" : "")}>
             Everything they took.
           </p>
-          <h2 id="stat-screens" className="stat-row visible">
+          <h2 id="stat-screens" className={"stat-row" + (mobile ? " visible" : "")}>
             On something they can't take.
           </h2>
-          <p id="stat-flows" className="stat-row visible">
+          <p id="stat-flows" className={"stat-row" + (mobile ? " visible" : "")}>
             A note-taking device. <em>Technically.</em>
           </p>
         </div>
