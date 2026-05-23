@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Zeeb — They took your phone. We gave it back.</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,500;1,9..144,700;1,9..144,900&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Inter:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,700;1,800;1,900&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --blue-0: #ffffff;
+    --blue-1: #f4f9ff;
+    --blue-2: #e6f1ff;
+    --blue-3: #cfe4ff;
+    --blue-4: #aed1fb;
+    --blue-edge: #98c3f5;
+    --ink:    #0a1626;
+    --ink-2:  #2a3a52;
+    --ink-3:  #5a6a82;
+    --ink-4:  #8a98ad;
+    --line:   #d8e3f2;
+    --pop:    #1b6dff;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: auto; background: var(--blue-1); }
+  body {
+    font-family: 'Geist', system-ui, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  ::selection { background: #c8e0ff; color: #0a1626; }
+
+  .display {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 900;
+    letter-spacing: -0.035em;
+    line-height: 0.92;
+    font-variation-settings: "SOFT" 100, "opsz" 144;
+  }
+  .mono {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-weight: 500;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-size: 11px;
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     PAGE — total scroll = 200vh. Hero is sticky for moment 1,
+     waitlist scrolls up to cover it for moment 2.
+     ───────────────────────────────────────────────────────── */
+  .page { position: relative; }
+
+  /* ── BACKGROUND — fixed, painterly light blue ── */
+  .bg-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: var(--blue-1);
+    overflow: hidden;
+  }
+  .bg-stage svg { width: 100%; height: 100%; display: block; }
+
+  /* subtle spotlight vignette — center brightest, edges slightly darker.
+     Sits above the bg-stage SVG but below all sections, so it reads as
+     depth in section 1 and section 3 (section 2 covers it with white). */
+  .bg-vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(ellipse 70% 65% at center,
+      rgba(255, 255, 255, 0.14) 0%,
+      rgba(255, 255, 255, 0)    32%,
+      rgba(20, 50, 95, 0.10)    100%);
+  }
+  /* very faint grain so it doesn't feel like a CSS gradient */
+  .bg-stage::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.18;
+    mix-blend-mode: overlay;
+  }
+
+  /* ── NAV — sits over everything, fixed top-left ── */
+  .nav {
+    position: fixed;
+    top: 28px; left: 32px; right: 32px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  /* WORDMARK — zeeb. is the brand. Inter Tight 900 italic, tight tracking,
+     paired with a custom dot in brand blue. Sized to be a confident logo
+     not a placeholder. Slight clip on the descender of the period makes
+     it feel custom-cut, like stripe./linear. */
+  .wordmark {
+    pointer-events: auto;
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-style: italic;
+    font-weight: 900;
+    font-size: 32px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.055em;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0;
+    position: relative;
+    transform: translateZ(0);
+  }
+  /* tighten the gap visually after the b before the dot */
+  .wordmark .glyphs { display: inline-block; }
+  .wordmark .dot {
+    display: inline-block;
+    width: 9px; height: 9px;
+    border-radius: 999px;
+    background: var(--pop);
+    margin-left: 2px;
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 0 rgba(27,109,255,0.45);
+    animation: dotBreathe 4s ease-in-out infinite;
+  }
+  @keyframes dotBreathe {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(27,109,255,0.45); }
+    50%      { box-shadow: 0 0 0 5px rgba(27,109,255,0); }
+  }
+  /* tiny underline accent that reinforces the lockup at large sizes */
+  .wordmark::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--ink) 0%, var(--ink) 78%, var(--pop) 78%, var(--pop) 100%);
+    border-radius: 2px;
+    opacity: 0.9;
+  }
+  @media (max-width: 720px) {
+    .wordmark { font-size: 26px; }
+    .wordmark .dot { width: 7px; height: 7px; }
+  }
+  .wordmark .dot {
+    width: 6px; height: 6px;
+    background: var(--pop);
+    border-radius: 999px;
+    transform: translateY(-2px);
+  }
+  .nav-corner {
+    pointer-events: auto;
+    color: var(--ink-3);
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .nav-corner .live {
+    width: 6px; height: 6px;
+    border-radius: 999px;
+    background: #2bb673;
+    box-shadow: 0 0 8px rgba(43,182,115,0.55);
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     MOMENT 1 — sticky hero stage. The device + apps live here.
+     Their transforms are driven by --p (scroll progress 0..1).
+     ───────────────────────────────────────────────────────── */
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    /* Stage sits above section 2 (z 25) so the hand carrying the device
+       stays visible while the white panel rises underneath. The stage's
+       content fades to opacity 0 after the grab, so section 2 still
+       reads cleanly once the lift is done. */
+    z-index: 30;
+    overflow: visible;
+  }
+
+  /* device — centered, floats gently, flies up as --dp goes to 1 */
+  .device-anchor {
+    position: absolute;
+    left: 50%; top: 50%;
+    z-index: 20;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    /* base = fast snap-back when you scroll up past the trigger */
+    transition:
+      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s ease;
+    will-change: transform, opacity;
+  }
+  .stage.grabbed .device-anchor {
+    transform: translate(-50%, -50%) translateY(-165vh) scale(0.9);
+    opacity: 0;
+    /* forward = waits for the hand to grip, then carries it off */
+    transition:
+      transform 1.05s cubic-bezier(0.5, 0, 0.3, 1) 0.62s,
+      opacity 0.55s ease 0.9s;
+  }
+
+  /* soft radial glow behind the device — "breathes" via scale+filter */
+  .device-glow {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 1080px; height: 1080px;
+    margin-left: -540px; margin-top: -540px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle,
+        rgba(220,235,255,0.85) 0%,
+        rgba(190,215,250,0.55) 18%,
+        rgba(170,205,245,0.30) 38%,
+        rgba(150,190,235,0.12) 58%,
+        rgba(150,190,235,0)    80%);
+    filter: blur(22px);
+    z-index: 1;                 /* always behind the device (device-bob is z-index 5) */
+    pointer-events: none;
+    transform-origin: center;
+    animation: glowBreathe 6.5s ease-in-out infinite;
+    /* soft light behind the device */
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  .stage.grabbed .device-glow {
+    opacity: 0;
+    transition: opacity 0.5s ease 0.7s;
+  }
+  @keyframes glowBreathe {
+    0%, 100% { transform: scale(1);    filter: blur(22px) brightness(1); }
+    50%      { transform: scale(1.06); filter: blur(28px) brightness(1.15); }
+  }
+
+  /* hand that reaches down to grab the device.
+     - sits as a sibling of .device-bob inside .device-anchor
+     - off-screen above when --p = 0
+     - slides down by p×600px until p ≈ 0.33, then clamps at the grip pose
+     - parent .device-anchor's scroll-lift takes both up together after that */
+  .hand-wrap {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;             /* hand's bottom touches device's top */
+    width: 420px;
+    height: 472px;
+    margin-left: -210px;
+    margin-bottom: -78px;     /* fingers overlap onto the device a touch */
+    z-index: 25;
+    pointer-events: none;
+    will-change: transform, opacity;
+    /* base = fast retract when you scroll back up past the trigger */
+    transform: translateY(-490px);
+    opacity: 0;
+    transition:
+      transform 0.35s ease,
+      opacity 0.2s ease;
+    filter: drop-shadow(0 16px 22px rgba(40,55,90,0.22));
+  }
+  .stage.grabbed .hand-wrap {
+    transform: translateY(0);
+    opacity: 1;
+    /* forward = reaches down into frame to grip the device */
+    transition:
+      transform 0.62s cubic-bezier(0.34, 0.1, 0.24, 1),
+      opacity 0.22s ease;
+  }
+  .hand-wrap svg { width: 100%; height: 100%; display: block; }
+  @media (max-width: 720px) {
+    .hand-wrap { width: 300px; height: 337px; margin-left: -150px; margin-bottom: -56px; }
+    .device-glow { width: 760px; height: 760px; margin-left: -380px; margin-top: -380px; }
+  }
+  /* stage-content wraps glow+hand+device so the scroll-driven shrink scales
+     them together. Starts at 1.4× on load — device fills most of the
+     screen as a hero shot — then scrolls down to 0.6× ("pocket-sized")
+     before the hand triggers. Hand-grip point scales with the device. */
+  .stage-content {
+    position: relative;
+    transform: scale(calc(1.4 - var(--shrink, 0) * 0.8));
+    transform-origin: center;
+    transition: transform 0.18s linear;
+  }
+
+  .device-bob {
+    position: relative;
+    z-index: 5;               /* device sits above its glow, below the hand */
+    animation: bob 7s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
+
+  /* floating apps — each app gets a unique --tx --ty exit vector */
+  .floats {
+    position: absolute;
+    inset: 0;
+    z-index: 15;
+    pointer-events: none;
+  }
+  .float-app {
+    position: absolute;
+    pointer-events: auto;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 18px 28px rgba(20,40,90,0.18));
+    transition: opacity .15s linear;
+  }
+  .float-app .bob {
+    animation: appBob var(--dur, 6s) ease-in-out var(--delay, 0s) infinite;
+  }
+  @keyframes appBob {
+    0%, 100% { transform: translate(0,0) rotate(var(--rot,0deg)); }
+    50%      { transform: translate(var(--dx,0px), var(--dy,-12px)) rotate(calc(var(--rot,0deg) + var(--rotD,3deg))); }
+  }
+  /* scatter outwards — translate by --dp × exit vector, fade out */
+  .float-app .scatter {
+    transform:
+      translate(calc(var(--dp, 0) * var(--exitX, 0px)),
+                calc(var(--dp, 0) * var(--exitY, 0px)))
+      rotate(calc(var(--dp, 0) * var(--exitR, 0deg)))
+      scale(calc(1 + var(--dp, 0) * 0.2));
+    opacity: calc(1 - var(--dp, 0) * 1.6);
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     MOMENT 2 — waitlist. Lives in normal flow, comes AFTER
+     the stage. As we scroll, it rises over the stage.
+     ───────────────────────────────────────────────────────── */
+  .waitlist-anchor {
+    position: relative;
+    z-index: 35;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 32px;
+    /* Transparent — section 2's white panel slides back down when the
+       user enters this region, revealing the same fixed bg-stage gradient
+       used in section 1. */
+    background: transparent;
+  }
+  .waitlist {
+    text-align: center;
+    max-width: 640px;
+    width: 100%;
+  }
+  .waitlist .eyebrow {
+    color: var(--ink-3);
+    margin-bottom: 24px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .waitlist .eyebrow::before,
+  .waitlist .eyebrow::after {
+    content: ""; display: inline-block;
+    width: 28px; height: 1px; background: var(--line);
+  }
+  .waitlist h1 {
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-style: normal;
+    font-weight: 800;
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .waitlist h1 .accent {
+    color: var(--pop);
+  }
+  .waitlist .sub {
+    margin: 24px auto 0;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 520px;
+  }
+
+  .form {
+    margin: 36px auto 0;
+    max-width: 460px;
+  }
+  .form .row {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+    padding: 6px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset, 0 16px 40px -20px rgba(20,60,140,0.18);
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  .form .row:focus-within {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 4px rgba(10,22,38,0.06), 0 16px 40px -20px rgba(20,60,140,0.25);
+  }
+  .form input {
+    flex: 1;
+    background: transparent;
+    border: 0; outline: 0;
+    padding: 14px 18px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+    min-width: 0;
+  }
+  .form input::placeholder { color: var(--ink-3); }
+  .form button {
+    background: var(--ink);
+    color: white;
+    border: 0;
+    border-radius: 999px;
+    padding: 0 22px;
+    height: 46px;
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: background .15s ease, transform .12s ease;
+  }
+  .form button:hover { background: #1a2940; transform: translateX(2px); }
+  .form button .arrow {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.16);
+  }
+
+  .proof {
+    margin-top: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink-3);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .proof .avs { display: flex; align-items: center; flex-shrink: 0; }
+  .proof .avs .av {
+    width: 26px; height: 26px; border-radius: 999px;
+    border: 2px solid white;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(20,40,90,0.10);
+  }
+  .proof .avs .av + .av { margin-left: -8px; }
+  .proof b { color: var(--ink); font-weight: 600; }
+
+  /* Section 1 hero text removed — hero is just device + stylus + apps now. */
+
+  /* ───────────────────────────────────────────────────
+     MOMENT 2 — MOBBIN SCROLL STATS SECTION
+     400vh sticky scroll with expanding logo field and
+     progress-based stat reveal. Zeeb-customized.
+     ─────────────────────────────────────────────────── */
+  /* spacer — gives Section 1 its own scroll zone so the device grab
+     fully plays out before Section 2 starts wiping up over it */
+  /* Section 2 is now position:fixed and slides in via translateY, so a
+     spacer isn't needed to gate the wipe-up. Kept at 0 so the layout
+     constants below still make sense. */
+  .stage-spacer {
+    height: 0;
+  }
+
+  /* Pure scroll space — the user scrolls through this to drive text
+     reveals; .sticky-section itself is fixed at the top of the viewport. */
+  .scroll-wrapper {
+    height: 400vh;
+    position: relative;
+  }
+
+  .sticky-section {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: grid;
+    /* Mobbin sits the text block in the lower half of the screen */
+    place-items: end center;
+    padding: 0 80px 14vh;
+    overflow: hidden;
+    z-index: 25;
+    background: #ffffff;
+    /* Section 2 starts just below the viewport and slides up in lock-step
+       with the hand lift. The CSS transform delay (0.5s) matches the
+       hand-reach phase, so the white panel begins rising as the hand
+       starts carrying the device upward — one fluid motion. */
+    transform: translateY(100vh);
+    transition: transform 1.3s cubic-bezier(0.5, 0, 0.3, 1) 0.5s;
+    will-change: transform;
+  }
+  .sticky-section.in {
+    transform: translateY(0);
+  }
+
+  .logo-background {
+    pointer-events: none;
+    position: absolute;
+    inset: 80px;                /* keeps every icon 80px+ off the edges */
+  }
+
+  /* Icons start clustered at center on the first section 2 reveal, then
+     spring outward to their final positions. The outer wrapper has the
+     transition on top/left/right (with a springy ease); the inner
+     .app-float carries the gentle per-frame motion. */
+  .app-logo-wrapper {
+    position: absolute;
+    opacity: 1;
+    transition:
+      top 0.85s cubic-bezier(0.34, 1.45, 0.45, 1),
+      left 0.85s cubic-bezier(0.34, 1.45, 0.45, 1),
+      right 0.85s cubic-bezier(0.34, 1.45, 0.45, 1);
+  }
+
+  .app-float {
+    display: block;
+  }
+
+  .stat-row {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    will-change: opacity, transform;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4.5vw, 56px);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 24px 0;
+    color: #111111;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .stat-row.visible {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+
+  .stat-row em {
+    font-style: italic;
+  }
+
+  .stats-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) {
+    .sticky-section {
+      padding: 0 24px;
+    }
+    .logo-background {
+      inset: 80px 24px;
+    }
+  }
+
+  /* legacy reveal-stack/reveal-app — no longer rendered */
+  .reveal-stack, .reveal-line, .reveal-apps, .reveal-app { display: none !important; }
+  .fly-apps, .fly-app, .reveal-text, .rt-small, .rt-big, .rt-italic { display: none !important; }
+  .reveal-strip, .marquee, .marquee-track, .marquee-cell { display: none !important; }
+  .explainer { display: none !important; }
+
+  @media (max-width: 720px) {
+    .marquee-label { display: none; }
+    .marquee-track { gap: 36px; }
+    .fly-app[data-hide="sm"] { display: none; }
+    .reveal { min-height: 160vh; }
+  }
+
+  /* scroll hint removed per spec */
+
+  /* keyframe used by the device's PANIC button */
+  @keyframes panicPulse {
+    0%, 100% { transform: scale(1);   opacity: 0.85; }
+    50%      { transform: scale(1.25); opacity: 0.35; }
+  }
+
+  /* small screens */
+  @media (max-width: 720px) {
+    .nav { top: 18px; left: 18px; right: 18px; }
+    .float-app[data-hide="sm"] { display: none; }
+    .waitlist h1 { font-size: clamp(40px, 11vw, 64px); }
+  }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="tweaks-panel.jsx?v=17"></script>
+<script type="text/babel" src="zeeb-device.jsx?v=17"></script>
+<script type="text/babel" src="zeeb-app.jsx?v=17"></script>
+
+</body>
+</html>

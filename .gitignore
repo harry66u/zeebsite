@@ -1,0 +1,30 @@
+# Local working files and large unused assets — exclude from the
+# deployed repo so it stays light and the Vercel build is fast.
+
+# Claude Code working dir
+.claude/
+
+# Random uploaded screenshots not used by the site (13MB+)
+uploads/
+screens/
+
+# Legacy / pre-edit copies of the source files
+*-v1.*
+app.jsx
+device.jsx
+scene.jsx
+
+# Local check screenshots
+_check*.png
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node (in case anyone adds build tooling later)
+node_modules/
+npm-debug.log*
+.env
+.env.*
