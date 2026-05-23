@@ -657,10 +657,17 @@ function App() {
     setStatus("loading");
     try {
       if (ZEEB_WAITLIST_ENDPOINT && !ZEEB_WAITLIST_ENDPOINT.startsWith("PASTE")) {
-        const url = new URL(ZEEB_WAITLIST_ENDPOINT);
-        url.searchParams.set("email", cleanEmail);
-        url.searchParams.set("timestamp", new Date().toISOString());
-        await fetch(url.toString(), { mode: "no-cors" });
+        const params = new URLSearchParams({
+          email: cleanEmail,
+          timestamp: new Date().toISOString(),
+        });
+        // sendBeacon: fire-and-forget POST, survives page nav, no CORS preflight
+        if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+          navigator.sendBeacon(ZEEB_WAITLIST_ENDPOINT, params);
+          await new Promise(r => setTimeout(r, 400));
+        } else {
+          await fetch(ZEEB_WAITLIST_ENDPOINT + "?" + params.toString(), { mode: "no-cors" });
+        }
       } else {
         await new Promise(r => setTimeout(r, 600));
       }
