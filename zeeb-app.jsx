@@ -163,12 +163,12 @@ function RevealApps() {
     { kind: "snap",      top: "10%", right: "7%",  size: 78, rot: 6  },
     { kind: "youtube",   top: "38%", left: "3%",   size: 80, rot: -4 },
     { kind: "instagram", top: "44%", right: "4%",  size: 74, rot: 8  },
-    { kind: "spotify",   bottom: "22%", left: "6%",  size: 64, rot: 10, hide: "sm" },
+    { kind: "chatgpt",   bottom: "22%", left: "6%",  size: 64, rot: 10, hide: "sm" },
     { kind: "tiktok",    bottom: "18%", right: "8%", size: 58, rot: -6, hide: "sm" },
     { kind: "snap",      top: "22%", left: "28%",  size: 44, rot: -8, hide: "sm" },
     { kind: "instagram", top: "30%", right: "26%", size: 46, rot: 6,  hide: "sm" },
     { kind: "youtube",   bottom: "8%",  left: "34%", size: 42, rot: 8,  hide: "sm" },
-    { kind: "spotify",   bottom: "6%",  right: "32%",size: 40, rot: -6, hide: "sm" },
+    { kind: "chatgpt",   bottom: "6%",  right: "32%",size: 40, rot: -6, hide: "sm" },
   ];
   return (
     <div className="reveal-apps">
@@ -333,7 +333,7 @@ function AppMarquee() {
     { kind: "snap",      label: "Snapchat"  },
     { kind: "youtube",   label: "YouTube"   },
     { kind: "instagram", label: "Instagram" },
-    { kind: "spotify",   label: "Spotify"   },
+    { kind: "chatgpt",   label: "ChatGPT"   },
     { kind: "whatsapp",  label: "WhatsApp"  },
   ];
   const doubled = [...sequence, ...sequence];
@@ -428,17 +428,17 @@ function AppTile({ size = 80, kind }) {
   //   white: true → whiten the glyph via filter (whatsapp.svg is the green
   //                 glyph; we want it white on the green tile).
   const CFG = {
-    tiktok:    { bg: "#010101", src: "logos/tiktok-icon-dark.svg", scale: 0.52 },
+    tiktok:    { bg: "#010101", src: "logos/tiktok-icon-dark.svg", scale: 0.76 },
     snapchat:  { bg: "#FFFC00", src: "logos/snapchat.svg",        full: true },
-    youtube:   { bg: "#FF0000", src: "logos/youtube.svg",         scale: 0.6 },
+    youtube:   { bg: "#FF0000", src: "logos/youtube.svg",         full: true },
     instagram: { bg: "linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
                  src: "logos/instagram-icon.svg",                 full: true },
     whatsapp:  { bg: "#25D366", src: "logos/whatsapp-icon.svg",   scale: 0.62, white: true },
     x:         { bg: "#000000", src: "logos/x-white.svg",         scale: 0.44 },
     sleeper:   { bg: "#000000", src: "logos/sleeper.svg",         full: true, cover: true },
-    yahoo:     { bg: "#6001D2", src: "logos/yahoo.svg",           scale: 0.72 },
-    espn:      { bg: "#CC0000", src: "logos/espn.svg",            scale: 0.72 },
-    chatgpt:   { bg: "#000000", src: "logos/chatgpt.svg",         scale: 0.68 },
+    yahoo:     { bg: "#6001D2", src: "logos/yahoo.svg",           full: true },
+    espn:      { bg: "#CC0000", src: "logos/espn.svg",            scale: 0.88, white: true },
+    chatgpt:   { bg: "#000000", src: "logos/chatgpt.svg",         full: true },
   };
 
   const c = CFG[kind] || { bg: "#888888", src: "" };
@@ -472,7 +472,7 @@ function FloatingApps() {
     { kind: "snap",      left: "8%",  top: "55%",  size: 64, rot: 6,  dur: 6.4, delay: 0.6, dx: -3, dy: -12, exitX: -640, exitY:  120, exitR:  30, hide: "sm" },
     { kind: "youtube",   left: "22%", top: "75%",  size: 70, rot: 4,  dur: 6.0, delay: 1.0, dx: 6,  dy: -10, exitX: -360, exitY:  520, exitR: -25 },
     { kind: "instagram", left: "78%", top: "22%",  size: 78, rot: 5,  dur: 6.0, delay: 0.3, dx: -5, dy: -14, exitX:  600, exitY: -300, exitR:  35 },
-    { kind: "spotify",   left: "84%", top: "60%",  size: 72, rot: 10, dur: 7.0, delay: 0.4, dx: 5,  dy: -18, exitX:  640, exitY:  240, exitR: -30 },
+    { kind: "chatgpt",   left: "84%", top: "60%",  size: 72, rot: 10, dur: 7.0, delay: 0.4, dx: 5,  dy: -18, exitX:  640, exitY:  240, exitR: -30 },
     { kind: "tiktok",    left: "70%", top: "82%",  size: 56, rot: -6, dur: 6.6, delay: 0.9, dx: 3,  dy: -14, exitX:  380, exitY:  540, exitR:  20, hide: "sm" },
   ];
 
