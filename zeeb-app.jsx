@@ -205,10 +205,22 @@ function MobinScrollReveal({ grabbed }) {
   const [entered, setEntered] = useState(mobile);
   const [time, setTime] = useState(0);
 
-  // Exact final positions provided — corner-positioned (top/left = icon's
-  // top-left), inside the 80px-inset .logo-background. None inside the
-  // center zone (25–75% horizontal, 30–70% vertical).
-  const apps = [
+  // Final positions — corner-positioned (top/left = icon's top-left), inside
+  // the 80px-inset .logo-background. None inside the center text zone.
+  // Mobile layout is taller/narrower so icons are pushed to top + bottom
+  // bands and out of the middle where the stat text sits.
+  const apps = mobile ? [
+    { kind: "tiktok",    top: "4%",  left: "4%"  },
+    { kind: "yahoo",     top: "2%",  left: "42%" },
+    { kind: "snapchat",  top: "4%",  left: "80%" },
+    { kind: "youtube",   top: "18%", left: "0%"  },
+    { kind: "instagram", top: "16%", left: "82%" },
+    { kind: "x",         top: "68%", left: "0%"  },
+    { kind: "sleeper",   top: "70%", left: "82%" },
+    { kind: "spotify",   top: "86%", left: "4%"  },
+    { kind: "espn",      top: "88%", left: "42%" },
+    { kind: "whatsapp",  top: "86%", left: "80%" },
+  ] : [
     { kind: "tiktok",    top: "5%",  left: "8%"  }, // top left
     { kind: "snapchat",  top: "3%",  left: "78%" }, // top right
     { kind: "yahoo",     top: "5%",  left: "42%" }, // top center
@@ -306,7 +318,7 @@ function MobinScrollReveal({ grabbed }) {
             return (
               <div key={i} className="app-logo-wrapper" style={pos}>
                 <div className="app-float" style={{ transform: `translate(${fx}px, ${fy}px)` }}>
-                  <AppTile size={80} kind={app.kind} />
+                  <AppTile size={mobile ? 56 : 80} kind={app.kind} />
                 </div>
               </div>
             );
@@ -314,13 +326,13 @@ function MobinScrollReveal({ grabbed }) {
         </div>
 
         <div className="stats-center">
-          <p id="stat-apps" className="stat-row">
+          <p id="stat-apps" className={"stat-row" + (mobile ? " visible" : "")}>
             Everything they took.
           </p>
-          <h2 id="stat-screens" className="stat-row">
+          <h2 id="stat-screens" className={"stat-row" + (mobile ? " visible" : "")}>
             On something they can't take.
           </h2>
-          <p id="stat-flows" className="stat-row">
+          <p id="stat-flows" className={"stat-row" + (mobile ? " visible" : "")}>
             A note-taking device. <em>Technically.</em>
           </p>
         </div>

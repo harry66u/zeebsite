@@ -624,10 +624,7 @@
       min-height: 100svh;
     }
     .sticky-section {
-      padding: 0 24px;
-    }
-    .logo-background {
-      inset: 80px 24px;
+      padding: 0 16px;
     }
     /* icons: static, no floating */
     .app-logo-wrapper {
@@ -636,11 +633,18 @@
     .app-float {
       transform: none !important;
     }
-    /* stats: all visible immediately */
+    /* stats: always visible, sized to fit narrow screens */
     .stat-row {
       opacity: 1 !important;
       transform: none !important;
       transition: none !important;
+      font-size: clamp(18px, 5.2vw, 26px) !important;
+      white-space: normal !important;
+      margin: 14px 0 !important;
+      padding: 0 8px;
+    }
+    .logo-background {
+      inset: 60px 16px;
     }
   }
 

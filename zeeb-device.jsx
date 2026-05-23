@@ -125,28 +125,44 @@ function ZeebDevice({ width = 460, height = 225 }) {
    right edge, tilted slightly so it reads as "resting" against the
    bezel rather than clipped through it. Length scales with the device. */
 function Stylus({ deviceWidth, deviceHeight }) {
-  const len = Math.round(deviceHeight * 0.92);
+  const mobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  const len = mobile
+    ? Math.round(deviceWidth * 0.7)
+    : Math.round(deviceHeight * 0.92);
   const tipW = 5;
   const barrelW = 9;
   const angle = 14; // degrees, tilted top-right -> bottom-left of contact
 
-  // anchor the visual center of the stylus just past the device's right edge
-  const offsetRight = -Math.round(barrelW * 0.55);
-  const topOffset = Math.round((deviceHeight - len) / 2) - 6;
+  // Desktop: vertical on the right edge, tilted clockwise.
+  // Mobile: horizontal across the top of the device, tilted slightly up.
+  const wrapperStyle = mobile
+    ? {
+        position: "absolute",
+        top: -Math.round(len / 2) - 4,
+        left: Math.round(deviceWidth / 2 - barrelW / 2),
+        width: barrelW,
+        height: len,
+        transform: `rotate(${-(90 - angle)}deg)`,
+        transformOrigin: "center center",
+        zIndex: 2,
+        pointerEvents: "none",
+        filter: "drop-shadow(0 14px 18px rgba(20,40,90,0.30)) drop-shadow(0 2px 3px rgba(20,40,90,0.20))",
+      }
+    : {
+        position: "absolute",
+        right: -Math.round(barrelW * 0.55),
+        top: Math.round((deviceHeight - len) / 2) - 6,
+        width: barrelW,
+        height: len,
+        transform: `rotate(${angle}deg)`,
+        transformOrigin: "bottom center",
+        zIndex: 2,
+        pointerEvents: "none",
+        filter: "drop-shadow(0 14px 18px rgba(20,40,90,0.30)) drop-shadow(0 2px 3px rgba(20,40,90,0.20))",
+      };
 
   return (
-    <div style={{
-      position: "absolute",
-      right: offsetRight,
-      top: topOffset,
-      width: barrelW,
-      height: len,
-      transform: `rotate(${angle}deg)`,
-      transformOrigin: "bottom center",
-      zIndex: 2,
-      pointerEvents: "none",
-      filter: "drop-shadow(0 14px 18px rgba(20,40,90,0.30)) drop-shadow(0 2px 3px rgba(20,40,90,0.20))",
-    }}>
+    <div style={wrapperStyle}>
       {/* eraser cap at the top */}
       <div style={{
         position: "absolute",
