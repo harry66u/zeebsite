@@ -284,6 +284,37 @@ function MobinScrollReveal({ grabbed }) {
     return () => clearTimeout(t);
   }, [grabbed, iconsDispersed]);
 
+  // On mobile: render a completely static document-flow section.
+  // No scroll-wrapper, no sticky-section, no CSS class animations.
+  if (mobile) {
+    const statStyle = {
+      opacity: 1, transform: "none", transition: "none",
+      fontFamily: "'Inter', sans-serif", fontWeight: 700,
+      fontSize: "clamp(18px, 5.2vw, 26px)", letterSpacing: "-0.02em",
+      lineHeight: 1.2, margin: "14px 0", color: "#111111",
+    };
+    return (
+      <div style={{
+        background: "#ffffff", position: "relative",
+        minHeight: "100vh", display: "flex",
+        alignItems: "center", justifyContent: "center",
+        overflow: "hidden",
+      }}>
+        <div style={{ position: "absolute", inset: "60px 16px", pointerEvents: "none" }}>
+          {apps.map((app, i) => (
+            <div key={i} style={{ position: "absolute", top: app.top, left: app.left }}>
+              <AppTile size={56} kind={app.kind} />
+            </div>
+          ))}
+        </div>
+        <div style={{ position: "relative", zIndex: 10, width: "100%", textAlign: "center", padding: "0 16px" }}>
+          <p style={statStyle}>Everything they took.</p>
+          <h2 style={statStyle}>On something they can't take.</h2>
+          <p style={statStyle}>A note-taking device. <em>Technically.</em></p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="scroll-wrapper" ref={wrapperRef}>
