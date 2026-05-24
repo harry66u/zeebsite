@@ -290,7 +290,8 @@ function MobinScrollReveal({ grabbed }) {
     const statStyle = {
       opacity: 1, transform: "none", transition: "none",
       fontFamily: "'Inter', sans-serif", fontWeight: 700,
-      letterSpacing: "-0.02em", color: "#111111",
+      fontSize: "clamp(18px, 5.2vw, 26px)", letterSpacing: "-0.02em",
+      lineHeight: 1.2, margin: "14px 0", color: "#111111",
     };
     return (
       <div className="mobile-section-2" style={{
@@ -307,9 +308,9 @@ function MobinScrollReveal({ grabbed }) {
           ))}
         </div>
         <div style={{ position: "relative", zIndex: 10, width: "100%", textAlign: "center", padding: "0 16px" }}>
-          <p className="stat-row visible" style={statStyle}>Everything they took.</p>
-          <h2 className="stat-row visible" style={statStyle}>On something they can't take.</h2>
-          <p className="stat-row visible" style={statStyle}>A note-taking device. <em>Technically.</em></p>
+          <p style={statStyle}>Everything they took.</p>
+          <h2 style={statStyle}>On something they can't take.</h2>
+          <p style={statStyle}>A note-taking device. <em>Technically.</em></p>
         </div>
       </div>
     );
