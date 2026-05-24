@@ -294,13 +294,13 @@ function MobinScrollReveal({ grabbed }) {
       lineHeight: 1.2, margin: "14px 0", color: "#111111",
     };
     return (
-      <div style={{
+      <div className="mobile-section-2" style={{
         background: "#ffffff", position: "relative",
         minHeight: "100vh", display: "flex",
         alignItems: "center", justifyContent: "center",
         overflow: "hidden", zIndex: 30,
       }}>
-        <div style={{ position: "absolute", inset: "60px 16px", pointerEvents: "none" }}>
+        <div className="mobile-icons-field" style={{ position: "absolute", inset: "60px 16px", pointerEvents: "none" }}>
           {apps.map((app, i) => (
             <div key={i} className="app-logo-wrapper">
               <AppTile size={70} kind={app.kind} />
