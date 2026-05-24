@@ -863,9 +863,9 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-<script type="text/babel" src="tweaks-panel.jsx?v=25"></script>
-<script type="text/babel" src="zeeb-device.jsx?v=25"></script>
-<script type="text/babel" src="zeeb-app.jsx?v=25"></script>
+<script type="text/babel" src="tweaks-panel.jsx?v=26"></script>
+<script type="text/babel" src="zeeb-device.jsx?v=26"></script>
+<script type="text/babel" src="zeeb-app.jsx?v=26"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -909,8 +909,10 @@ document.addEventListener('DOMContentLoaded', function() {
   var dispersed = false;
 
   if (section2) {
-    var observer = new IntersectionObserver(function(entries) {
-      if (!entries[0].isIntersecting || dispersed) return;
+    // Scroll-based trigger: fires when user has scrolled 40% of the section
+    // height past the point where the section top hits the viewport top.
+    // Much later than IntersectionObserver can achieve on a full-height section.
+    function doDisperse() {
       dispersed = true;
       mobileIcons.forEach(function(el, i) {
         setTimeout(function() {
@@ -919,19 +921,18 @@ document.addEventListener('DOMContentLoaded', function() {
           el.style.left = finalPositions[i].left;
         }, i * 60);
       });
-      observer.disconnect();
-    }, { threshold: 0.6, rootMargin: '0px 0px -40% 0px' });
-    observer.observe(section2);
+    }
 
-    // Parallax — each icon moves at a slightly different rate
     var parallaxRates = [0.05, 0.08, 0.03, 0.07, 0.04, 0.06, 0.09, 0.02, 0.05, 0.07];
     window.addEventListener('scroll', function() {
-      if (!dispersed) return;
       var rect = section2.getBoundingClientRect();
-      var scrolled = -rect.top;
-      if (scrolled > 0) {
+      var scrolledIn = -rect.top; // px scrolled past section top
+      if (!dispersed && scrolledIn >= section2.offsetHeight * 0.4) {
+        doDisperse();
+      }
+      if (dispersed && scrolledIn > 0) {
         mobileIcons.forEach(function(el, i) {
-          el.style.transform = 'translateY(' + (scrolled * parallaxRates[i]) + 'px)';
+          el.style.transform = 'translateY(' + (scrolledIn * parallaxRates[i]) + 'px)';
         });
       }
     }, { passive: true });
