@@ -927,7 +927,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('scroll', function() {
       var rect = section2.getBoundingClientRect();
       var scrolledIn = -rect.top; // px scrolled past section top
-      if (!dispersed && scrolledIn >= section2.offsetHeight * 0.4) {
+      if (!dispersed && scrolledIn >= section2.offsetHeight * 0.75) {
         doDisperse();
       }
       if (dispersed && scrolledIn > 0) {
