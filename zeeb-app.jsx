@@ -290,8 +290,8 @@ function MobinScrollReveal({ grabbed }) {
     const statStyle = {
       opacity: 1, transform: "none", transition: "none",
       fontFamily: "'Inter', sans-serif", fontWeight: 700,
-      fontSize: "clamp(18px, 5.2vw, 26px)", letterSpacing: "-0.02em",
-      lineHeight: 1.2, margin: "14px 0", color: "#111111",
+      fontSize: "clamp(23px, 6.8vw, 34px)", letterSpacing: "-0.02em",
+      lineHeight: 1.2, margin: "18px 0", color: "#111111",
     };
     return (
       <div className="mobile-section-2" style={{
@@ -303,7 +303,7 @@ function MobinScrollReveal({ grabbed }) {
         <div className="mobile-icons-field" style={{ position: "absolute", inset: "60px 16px", pointerEvents: "none" }}>
           {apps.map((app, i) => (
             <div key={i} className="app-logo-wrapper">
-              <AppTile size={70} kind={app.kind} />
+              <AppTile size={58} kind={app.kind} />
             </div>
           ))}
         </div>
